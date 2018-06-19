@@ -200,20 +200,23 @@ class _SignatureState extends State<Signature> {
 
   @override
   Widget build(BuildContext context) {
+
     return new Scaffold(
       body: new GestureDetector(
         onPanUpdate: (DragUpdateDetails details) {
-          print("gesture detected1");
           setState(() {
+            print("gesture detected!");
             RenderBox referenceBox = context.findRenderObject();
             Offset localPosition =
                 referenceBox.globalToLocal(details.globalPosition);
-            _points.add(localPosition);
+            _points = new List.from(_points)..add(localPosition);
+//            painter._points = _points;
           });
         },
         onPanEnd: (DragEndDetails details) => _points.add(null),
         child: new CustomPaint(
           painter: new SignaturePainter(_points),
+          size: Size.infinite,
         ),
       ),
     );
@@ -221,7 +224,7 @@ class _SignatureState extends State<Signature> {
 }
 
 class SignaturePainter extends CustomPainter {
-  final List<Offset> _points;
+  List<Offset> _points;
 
   SignaturePainter(this._points);
 
@@ -242,8 +245,7 @@ class SignaturePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(SignaturePainter oldDelegate) =>
-      oldDelegate._points != _points ||
-      oldDelegate._points.length != _points.length;
+      oldDelegate._points != _points;
 }
 
 class MyFadeTest extends StatefulWidget {
