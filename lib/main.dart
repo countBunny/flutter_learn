@@ -37,6 +37,13 @@ class RandomWordsState extends State<RandomWords> {
 
   final _saved = new Set<WordPair>();
 
+  final _menus = <String>[
+    'sample view',
+    'sample to layout use EdgeInsets.only',
+    'sample to use animate',
+    'sample to use canvas'
+  ];
+
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
@@ -45,7 +52,9 @@ class RandomWordsState extends State<RandomWords> {
       appBar: new AppBar(
         title: new Text('Startup Name Generator'),
         actions: <Widget>[
-          new IconButton(icon: new Icon(Icons.list), onPressed: _pushSaved)
+          new IconButton(icon: new Icon(Icons.list), onPressed: _pushSaved),
+          new IconButton(
+              icon: new Icon(Icons.bookmark_border), onPressed: _pushSample)
         ],
       ),
       body: _buildSuggestions(),
@@ -109,6 +118,232 @@ class RandomWordsState extends State<RandomWords> {
         ),
       );
     }));
+  }
+
+  void _pushSample() {
+    Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+      var count = 0;
+      final tiles = _menus.map((menu) {
+        final index = count++;
+        return new ListTile(
+          title: new Text(
+            menu,
+            style: _biggerFont,
+          ),
+          onTap: () {
+            _sampleView(index);
+          },
+        );
+      });
+      final divided =
+          ListTile.divideTiles(context: context, tiles: tiles).toList();
+
+      return new Scaffold(
+        appBar: new AppBar(
+          title: new Text('Test Flutter for Android here!'),
+        ),
+        body: new ListView(
+          children: divided,
+        ),
+      );
+    }));
+  }
+
+  void _sampleView(int index) {
+    Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
+      if (index == 0) {
+        return new SampleAppPage();
+      } else if (index == 1) {
+        return new Scaffold(
+          appBar: new AppBar(
+            title: new Text('Sample App'),
+          ),
+          body: new Center(
+            child: new MaterialButton(
+              onPressed: () {},
+              child: new Text('Hello'),
+              padding: new EdgeInsets.only(
+                left: 10.0,
+                right: 10.0,
+              ),
+              color: Colors.cyan,
+            ),
+          ),
+        );
+      } else if (index == 2) {
+        return new MyFadeTest(
+          title: 'Fade Demo',
+        );
+      } else if (index == 3) {
+        return new Signature();
+      } else {
+        return new Scaffold(
+          appBar: new AppBar(
+            title: new Text('Unimplemented page!'),
+          ),
+          body: new Center(
+            child: new Text('sorry, this page havent been implemented'),
+          ),
+        );
+      }
+    }));
+  }
+}
+
+class Signature extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new _SignatureState();
+}
+
+class _SignatureState extends State<Signature> {
+  List<Offset> _points = <Offset>[];
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new GestureDetector(
+        onPanUpdate: (DragUpdateDetails details) {
+          print("gesture detected1");
+          setState(() {
+            RenderBox referenceBox = context.findRenderObject();
+            Offset localPosition =
+                referenceBox.globalToLocal(details.globalPosition);
+            _points.add(localPosition);
+          });
+        },
+        onPanEnd: (DragEndDetails details) => _points.add(null),
+        child: new CustomPaint(
+          painter: new SignaturePainter(_points),
+        ),
+      ),
+    );
+  }
+}
+
+class SignaturePainter extends CustomPainter {
+  final List<Offset> _points;
+
+  SignaturePainter(this._points);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    var paint = new Paint()
+      ..color = Colors.black
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 5.0;
+    print("canvas draw invoked");
+    for (int i = 0; i < _points.length - 1; i++) {
+      if (_points[i] != null && _points[i + 1] != null) {
+        canvas.drawLine(_points[i], _points[i + 1], paint);
+        print("canvas draw current index is $i");
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(SignaturePainter oldDelegate) =>
+      oldDelegate._points != _points ||
+      oldDelegate._points.length != _points.length;
+}
+
+class MyFadeTest extends StatefulWidget {
+  final String title;
+
+  MyFadeTest({Key key, this.title}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() {
+    return new _MyFadeTest();
+  }
+}
+
+class _MyFadeTest extends State<MyFadeTest>
+    with TickerProviderStateMixin<MyFadeTest> {
+  AnimationController controller;
+  CurvedAnimation curve;
+
+  @override
+  void initState() {
+    controller = new AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 2000));
+    curve = new CurvedAnimation(parent: controller, curve: Curves.easeIn);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text(widget.title),
+      ),
+      body: new Center(
+        child: new FadeTransition(
+          opacity: curve,
+          child: new FlutterLogo(
+            size: 100.0,
+          ),
+        ),
+      ),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: () {
+          controller.forward();
+        },
+        tooltip: 'Fade',
+        child: new Icon(Icons.brush),
+      ),
+    );
+  }
+}
+
+class SampleAppPage extends StatefulWidget {
+  SampleAppPage({Key key}) : super(key: key);
+
+  @override
+  State<SampleAppPage> createState() => new _SampleAppPageState();
+}
+
+class _SampleAppPageState extends State<SampleAppPage> {
+  String textToShow = 'I Like Flutter';
+  bool toggle = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Sample Page'),
+      ),
+      body: new Center(
+        child: _getToggleChild(),
+      ),
+      floatingActionButton: new FloatingActionButton(
+        onPressed: _toggle,
+        tooltip: 'Update Text',
+        child: new Icon(Icons.update),
+      ),
+    );
+  }
+
+  void _updateText() {
+    setState(() {
+      textToShow = 'Flutter is Awesome!';
+    });
+  }
+
+  _getToggleChild() {
+    if (toggle) {
+      return new Text(textToShow);
+    } else {
+      return new MaterialButton(
+        onPressed: _updateText,
+        child: new Text(textToShow),
+        color: Colors.grey,
+      );
+    }
+  }
+
+  void _toggle() {
+    setState(() {
+      toggle = !toggle;
+    });
   }
 }
 
