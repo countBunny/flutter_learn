@@ -1,5 +1,11 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:isolate';
+
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 void main() => runApp(new MyApp());
 
@@ -23,6 +29,10 @@ class MyApp extends StatelessWidget {
       ),
 //new MyHomePage(title: 'Flutter Demo Home Page')
       home: new RandomWords(),
+      routes: <String, WidgetBuilder>{
+        '/a': (BuildContext context) =>
+            new MyHomePage(title: 'route destinay a!'),
+      },
     );
   }
 }
@@ -41,7 +51,12 @@ class RandomWordsState extends State<RandomWords> {
     'sample view',
     'sample to layout use EdgeInsets.only',
     'sample to use animate',
-    'sample to use canvas'
+    'sample to use canvas',
+    'sample to custom view',
+    'sample to Navigator',
+    'sample to share handler obtain intent data!',
+    'sample to request http data',
+    'sample to visit asset resources',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -150,6 +165,11 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   void _sampleView(int index) {
+    if (index == 5) {
+      getCoodinateInRouteA();
+      return;
+    }
+    print('method didnt reach here!');
     Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
       if (index == 0) {
         return new SampleAppPage();
@@ -176,7 +196,15 @@ class RandomWordsState extends State<RandomWords> {
         );
       } else if (index == 3) {
         return new Signature();
-      } else {
+      } else if (index == 4) {
+        return customWidget();
+      } else if (index == 6) {
+        return new SharedIntentPage();
+      } else if (index == 7) {
+        return new HttpRequestPage();
+      } else if (index == 8){
+        return new ResourcesVisitPage();
+      }else {
         return new Scaffold(
           appBar: new AppBar(
             title: new Text('Unimplemented page!'),
@@ -187,6 +215,212 @@ class RandomWordsState extends State<RandomWords> {
         );
       }
     }));
+  }
+
+  Widget customWidget() {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Custom Widget'),
+      ),
+      body: new Center(
+        child: new CustomButton('buttonCustomed'),
+      ),
+    );
+  }
+
+  getCoodinateInRouteA() async {
+//    Map coordinates = await
+    var object = await Navigator.of(context).pushNamed('/a');
+    if (object != null) {
+      Map coordinates = object;
+      print('map is ${coordinates.toString()}');
+    }
+//    if (coordinates != null) {
+//      print('map is ${coordinates.toString()}');
+//    }
+  }
+}
+
+class ResourcesVisitPage extends StatefulWidget {
+
+  ResourcesVisitPage({Key key}):super(key:key);
+
+  @override
+  State<StatefulWidget> createState() => new _ResourcesVisitState();
+}
+
+class _ResourcesVisitState extends State<ResourcesVisitPage> {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Resources visit demo'),
+      ),
+      body: new Column(
+        children: <Widget>[
+          new Image(image: new AssetImage("images/ic_medal.png")),
+        ],
+      ),
+    );
+  }
+}
+
+class HttpRequestPage extends StatefulWidget {
+  HttpRequestPage({Key key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => new _HttpRequestPageState();
+}
+
+class _HttpRequestPageState extends State<HttpRequestPage> {
+  List widgets = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Http request demo'),
+        actions: <Widget>[
+          new RaisedButton(
+            onPressed: () {
+              loadDataInIsolateWay();
+            },
+            child: new Text('loadData in Isolate way'),
+          )
+        ],
+      ),
+      body: getBody(),
+    );
+  }
+
+  loadData() async {
+    String dataUrl = "https://jsonplaceholder.typicode.com/posts";
+    http.Response response = await http.get(dataUrl);
+    setState(() {
+      widgets = json.decode(response.body);
+    });
+  }
+
+  Widget getRow(int i) {
+    return new Padding(
+      padding: new EdgeInsets.all(10.0),
+      child: new Text("Row ${widgets[i]["title"]}"),
+    );
+  }
+
+  loadDataInIsolateWay() async {
+    setState(() {
+      widgets.clear();
+    });
+    ReceivePort receivePort = new ReceivePort();
+    await Isolate.spawn(dataLoader, receivePort.sendPort);
+    //acquire isolate's sendPort
+    SendPort sendPort = await receivePort.first;
+    List msg = await sendReceive(
+        sendPort, "https://jsonplaceholder.typicode.com/posts");
+    setState(() {
+      print("data load Success in Isolate way");
+      widgets = msg;
+    });
+  }
+
+  bool showLoadingDialog() {
+    if (widgets.length == 0) {
+      return true;
+    }
+    return false;
+  }
+
+  getBody() {
+    if (showLoadingDialog()) {
+      return getProgressDialog();
+    }
+    return getListView();
+  }
+
+  static dataLoader(SendPort sendPort) async {
+    ReceivePort port = new ReceivePort();
+    //此函数会即刻执行，阻塞在 await 等待命令输入
+    sendPort.send(port.sendPort);
+    await for (var msg in port) {
+      String data = msg[0];
+      SendPort replyTo = msg[1];
+      String dataURL = data;
+      http.Response response = await http.get(dataURL);
+      replyTo.send(json.decode(response.body));
+    }
+  }
+
+  Future sendReceive(SendPort sendPort, String url) {
+    ReceivePort response = new ReceivePort();
+    sendPort.send([url, response.sendPort]);
+    return response.first;
+  }
+
+  getProgressDialog() => new Center(
+      child: new CircularProgressIndicator(),
+    );
+
+  getListView() => new ListView.builder(
+      itemCount: widgets.length,
+      itemBuilder: (context, index) {
+        return getRow(index);
+      });
+}
+
+class SharedIntentPage extends StatefulWidget {
+  SharedIntentPage({Key key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => new _SharedIntentPageState();
+}
+
+class _SharedIntentPageState extends State<SharedIntentPage> {
+  static const platform = const MethodChannel('app.channel.shared.data');
+  String dataShared = "No data";
+
+  @override
+  void initState() {
+    super.initState();
+    getSharedText();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Center(
+        child: new Text(dataShared),
+      ),
+    );
+  }
+
+  getSharedText() async {
+    var sharedData = await platform.invokeMethod('getSharedText');
+    if (sharedData != null) {
+      setState(() {
+        dataShared = sharedData;
+      });
+    }
+  }
+}
+
+class CustomButton extends StatelessWidget {
+  final String label;
+
+  CustomButton(this.label);
+
+  @override
+  Widget build(BuildContext context) {
+    return new RaisedButton(
+      onPressed: () {},
+      child: new Text(label),
+    );
   }
 }
 
@@ -200,7 +434,6 @@ class _SignatureState extends State<Signature> {
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       body: new GestureDetector(
         onPanUpdate: (DragUpdateDetails details) {
@@ -421,6 +654,14 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.display1,
             ),
+            new RaisedButton(
+              onPressed: () {
+                Navigator
+                    .of(context)
+                    .pop({'lat': 43.821757, 'long': -79.226392});
+              },
+              child: new Text('back with result'),
+            )
           ],
         ),
       ),

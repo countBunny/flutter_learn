@@ -36,6 +36,10 @@ flutter:
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.io/assets-and-images/#from-packages
+  assets:
+   - images/ic_medal.png
+   - images/2.0x/ic_medal.png
+   - images/3.0x/ic_medal.png
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
