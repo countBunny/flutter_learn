@@ -7,6 +7,7 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_try/layout_demo1.dart';
 import 'package:flutter_try/listview_demo.dart';
+import 'package:flutter_try/text_demo.dart';
 import 'package:flutter_try/utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -65,6 +66,7 @@ class RandomWordsState extends State<RandomWords> {
     'layouts demo1 from stackOverflow',
     'sample to gestureDetector',
     'sample to use listView',
+    'sample to use Text in custom way',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -222,6 +224,8 @@ class RandomWordsState extends State<RandomWords> {
         return new GestureDetectorPage();
       } else if (index == 13) {
         return new ListViewPage();
+      } else if (index == 14) {
+        return new TextPage();
       } else {
         return new Scaffold(
           appBar: new AppBar(

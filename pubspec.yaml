@@ -60,3 +60,7 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
+  fonts:
+    - family: fitzgerald
+      fonts:
+      - asset: assets/fonts/fitzgerald_r.ttf
