@@ -5,6 +5,9 @@ import 'dart:isolate';
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_try/layout_demo1.dart';
+import 'package:flutter_try/listview_demo.dart';
+import 'package:flutter_try/utils.dart';
 import 'package:http/http.dart' as http;
 
 void main() => runApp(new MyApp());
@@ -57,6 +60,11 @@ class RandomWordsState extends State<RandomWords> {
     'sample to share handler obtain intent data!',
     'sample to request http data',
     'sample to visit asset resources',
+    'sample to supervisor lifecycle event',
+    'sample to layouts',
+    'layouts demo1 from stackOverflow',
+    'sample to gestureDetector',
+    'sample to use listView',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -202,9 +210,19 @@ class RandomWordsState extends State<RandomWords> {
         return new SharedIntentPage();
       } else if (index == 7) {
         return new HttpRequestPage();
-      } else if (index == 8){
+      } else if (index == 8) {
         return new ResourcesVisitPage();
-      }else {
+      } else if (index == 9) {
+        return new LifecycleWatcher();
+      } else if (index == 10) {
+        return new LayoutsPage();
+      } else if (index == 11) {
+        return new LayoutDemoApp();
+      } else if (index == 12) {
+        return new GestureDetectorPage();
+      } else if (index == 13) {
+        return new ListViewPage();
+      } else {
         return new Scaffold(
           appBar: new AppBar(
             title: new Text('Unimplemented page!'),
@@ -241,9 +259,129 @@ class RandomWordsState extends State<RandomWords> {
   }
 }
 
-class ResourcesVisitPage extends StatefulWidget {
+class GestureDetectorPage extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new _GestureDetectorState();
+}
 
-  ResourcesVisitPage({Key key}):super(key:key);
+class _GestureDetectorState extends State<GestureDetectorPage>
+    with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+  CurvedAnimation curve;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = new AnimationController(
+        duration: const Duration(milliseconds: 2000), vsync: this);
+    curve = new CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      body: new Center(
+        child: new GestureDetector(
+          child: new RotationTransition(
+            turns: curve,
+            child: new FlutterLogo(
+              size: 200.0,
+            ),
+          ),
+          onDoubleTap: () {
+            if (_controller.isCompleted) {
+              _controller.reverse();
+            } else {
+              _controller.forward();
+            }
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class LayoutsPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Layouts sample'),
+      ),
+      body: new Container(
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text('Row One'),
+                new Text('Row Two'),
+                new Text('Row Three'),
+                new Text('Row Four'),
+              ],
+            ),
+            new Text('Column Two'),
+            new Text('Column Three'),
+            new Text('Column Four'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class LifecycleWatcher extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new _LifecycleWatcherState();
+}
+
+class _LifecycleWatcherState extends State<LifecycleWatcher>
+    with WidgetsBindingObserver {
+  AppLifecycleState _lastLifecycleState;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("lifecycle changed to $state");
+    setState(() {
+      _lastLifecycleState = state;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_lastLifecycleState == null) {
+      return new Center(
+        child: new Text(
+          'This widget has not observed any lifecycle changes.',
+          textDirection: TextDirection.ltr,
+        ),
+      );
+    }
+    return new Center(
+      child: new Text(
+        'The most recent lifecycle state this widget observed was：$_lastLifecycleState.',
+        textDirection: TextDirection.ltr,
+      ),
+    );
+  }
+}
+
+class ResourcesVisitPage extends StatefulWidget {
+  ResourcesVisitPage({Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => new _ResourcesVisitState();
@@ -259,6 +397,7 @@ class _ResourcesVisitState extends State<ResourcesVisitPage> {
       body: new Column(
         children: <Widget>[
           new Image(image: new AssetImage("images/ic_medal.png")),
+          new Text(Strings.welcomeMessage)
         ],
       ),
     );
@@ -364,8 +503,8 @@ class _HttpRequestPageState extends State<HttpRequestPage> {
   }
 
   getProgressDialog() => new Center(
-      child: new CircularProgressIndicator(),
-    );
+        child: new CircularProgressIndicator(),
+      );
 
   getListView() => new ListView.builder(
       itemCount: widgets.length,
