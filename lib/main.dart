@@ -10,6 +10,7 @@ import 'package:flutter_try/input_demo.dart';
 import 'package:flutter_try/layout_demo1.dart';
 import 'package:flutter_try/listview_demo.dart';
 import 'package:flutter_try/location_demo.dart';
+import 'package:flutter_try/shared_preferences_demo.dart';
 import 'package:flutter_try/text_demo.dart';
 import 'package:flutter_try/utils.dart';
 import 'package:flutter_try/video_player_demo.dart';
@@ -74,6 +75,7 @@ class RandomWordsState extends State<RandomWords> {
     'sample to table input',
     'sample to use ImagePicker',
     'sample to use VideoPlayer',
+    'sample to use sharedPreferences',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -239,6 +241,8 @@ class RandomWordsState extends State<RandomWords> {
         return new ImagePickerPage('ImagePicker demo');
       } else if (index == 17) {
         return new VideoPlayerPage();
+      } else if (index == 18) {
+        return new SharedPreferencesPage();
       } else {
         return new Scaffold(
           appBar: new AppBar(
