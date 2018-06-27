@@ -4,13 +4,19 @@ import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_try/card_demo1.dart';
+import 'package:flutter_try/card_demo2.dart';
+import 'package:flutter_try/color_demo.dart';
+import 'package:flutter_try/contract_demo.dart';
 import 'package:flutter_try/image_picker_demo.dart';
 import 'package:flutter_try/input_demo.dart';
 import 'package:flutter_try/layout_demo1.dart';
 import 'package:flutter_try/listview_demo.dart';
 import 'package:flutter_try/location_demo.dart';
 import 'package:flutter_try/shared_preferences_demo.dart';
+import 'package:flutter_try/sqflite_demo.dart';
 import 'package:flutter_try/text_demo.dart';
 import 'package:flutter_try/utils.dart';
 import 'package:flutter_try/video_player_demo.dart';
@@ -22,6 +28,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+//    debugPaintSizeEnabled = true;
     return new MaterialApp(
       title: 'Startup Name Generator',
       theme: new ThemeData(
@@ -76,6 +83,11 @@ class RandomWordsState extends State<RandomWords> {
     'sample to use ImagePicker',
     'sample to use VideoPlayer',
     'sample to use sharedPreferences',
+    'sample to use sqflite',
+    'sample to color demo',
+    'sample to contacts demo',
+    'sample to card demo1',
+    'sample to card demo2',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -243,6 +255,16 @@ class RandomWordsState extends State<RandomWords> {
         return new VideoPlayerPage();
       } else if (index == 18) {
         return new SharedPreferencesPage();
+      } else if (index == 19) {
+        return new SqflitePage();
+      } else if (index == 20) {
+        return new ColorsDemo();
+      } else if (index == 21) {
+        return new ContactsDemo();
+      } else if (index == 22) {
+        return new CardDemo1(title: 'card demo1',);
+      } else if (index == 23) {
+        return new CardsDemo();
       } else {
         return new Scaffold(
           appBar: new AppBar(

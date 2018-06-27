@@ -15,6 +15,9 @@ dependencies:
   shared_preferences: "^0.4.2"
   sqflite: "^0.11.0"
 
+  # Also update dev/benchmarks/complex_layout/pubspec.yaml
+  flutter_gallery_assets: 0.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -39,12 +42,16 @@ flutter:
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
 
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.io/assets-and-images/#from-packages
   assets:
    - images/ic_medal.png
    - images/2.0x/ic_medal.png
    - images/3.0x/ic_medal.png
+   - images/lake.jpg
+
+   # For details regarding adding assets from package dependencies, see
+     # https://flutter.io/assets-and-images/#from-packages
+   - packages/flutter_gallery_assets/places/india_thanjavur_market.png
+   - packages/flutter_gallery_assets/places/india_chettinad_silk_maker.png
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
