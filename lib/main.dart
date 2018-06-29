@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:english_words/english_words.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_try/anim_demo/list_anim_demo.dart';
 import 'package:flutter_try/card_demo1.dart';
 import 'package:flutter_try/card_demo2.dart';
 import 'package:flutter_try/chart_demo/chart_page.dart';
@@ -94,6 +95,7 @@ class RandomWordsState extends State<RandomWords> {
     'sample to chart demo with CustomPainter',
     'official demo to learn how to layout',
     'official demo to learn how to interact',
+    'sample to anim list',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -277,6 +279,8 @@ class RandomWordsState extends State<RandomWords> {
         return new LayoutDemoPage();
       } else if (index == 26) {
         return new ParentWidget();
+      } else if (index == 27) {
+        return new AnimatedListSample();
       } else {
         return new Scaffold(
           appBar: new AppBar(
