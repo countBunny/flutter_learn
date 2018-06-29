@@ -17,6 +17,7 @@ import 'package:flutter_try/layout_demo1.dart';
 import 'package:flutter_try/listview_demo.dart';
 import 'package:flutter_try/location_demo.dart';
 import 'package:flutter_try/official/layout_official_demo.dart';
+import 'package:flutter_try/official/state_control_demo.dart';
 import 'package:flutter_try/shared_preferences_demo.dart';
 import 'package:flutter_try/sqflite_demo.dart';
 import 'package:flutter_try/text_demo.dart';
@@ -92,6 +93,7 @@ class RandomWordsState extends State<RandomWords> {
     'sample to card demo2',
     'sample to chart demo with CustomPainter',
     'official demo to learn how to layout',
+    'official demo to learn how to interact',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -273,6 +275,8 @@ class RandomWordsState extends State<RandomWords> {
         return new ChartPage();
       } else if (index == 25) {
         return new LayoutDemoPage();
+      } else if (index == 26) {
+        return new ParentWidget();
       } else {
         return new Scaffold(
           appBar: new AppBar(

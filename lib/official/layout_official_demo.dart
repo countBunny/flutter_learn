@@ -34,12 +34,7 @@ class _LayoutDemoState extends State<LayoutDemoPage> {
                     style: textTheme.body1.copyWith(color: Colors.grey[500]),
                   ),
                 ])),
-            new Icon(
-              Icons.favorite,
-              color: Colors.red[500],
-            ),
-            new Text('41',
-                style: textTheme.body1.copyWith(color: Colors.black87))
+            new FavoriteWidget()
           ],
         ));
     final buttonSection = new Padding(
@@ -84,7 +79,12 @@ class _LayoutDemoState extends State<LayoutDemoPage> {
       key: _mainKey,
       body: Column(
         children: <Widget>[
-          new Image.asset('images/lake.jpg', width: 600.0, height: 240.0, fit: BoxFit.cover,),
+          new Image.asset(
+            'images/lake.jpg',
+            width: 600.0,
+            height: 240.0,
+            fit: BoxFit.cover,
+          ),
           titleSection,
           buttonSection,
           textSection
@@ -112,6 +112,48 @@ class _LayoutDemoState extends State<LayoutDemoPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class FavoriteWidget extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() => new _FavoriteWidgetState();
+}
+
+class _FavoriteWidgetState extends State<FavoriteWidget> {
+  bool _isFavorited = true;
+  int _favoriteCount = 10;
+
+  void _toggleFavorite() {
+    setState(() {
+      if (_isFavorited) {
+        _favoriteCount -= 1;
+        _isFavorited = false;
+      } else {
+        _favoriteCount += 1;
+        _isFavorited = true;
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return new GestureDetector(
+      child: new Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          new Icon(
+            _isFavorited ? Icons.favorite : Icons.favorite_border,
+            color: Colors.red[500],
+          ),
+          new SizedBox(
+            width: 18.0,
+            child: new Text('$_favoriteCount'),
+          )
+        ],
+      ),
+      onTap: _toggleFavorite,
     );
   }
 }
