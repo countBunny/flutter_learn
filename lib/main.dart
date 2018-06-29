@@ -8,6 +8,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_try/card_demo1.dart';
 import 'package:flutter_try/card_demo2.dart';
+import 'package:flutter_try/chart_demo/chart_page.dart';
 import 'package:flutter_try/color_demo.dart';
 import 'package:flutter_try/contract_demo.dart';
 import 'package:flutter_try/image_picker_demo.dart';
@@ -88,6 +89,7 @@ class RandomWordsState extends State<RandomWords> {
     'sample to contacts demo',
     'sample to card demo1',
     'sample to card demo2',
+    'sample to chart demo with CustomPainter',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -265,6 +267,8 @@ class RandomWordsState extends State<RandomWords> {
         return new CardDemo1(title: 'card demo1',);
       } else if (index == 23) {
         return new CardsDemo();
+      } else if (index == 24) {
+        return new ChartPage();
       } else {
         return new Scaffold(
           appBar: new AppBar(
