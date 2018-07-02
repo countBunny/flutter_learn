@@ -7,9 +7,11 @@ import 'package:english_words/english_words.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_try/anim_demo/list_anim_demo.dart';
+import 'package:flutter_try/anim_demo/scale_anim_demo.dart';
 import 'package:flutter_try/card_demo1.dart';
 import 'package:flutter_try/card_demo2.dart';
 import 'package:flutter_try/chart_demo/chart_page.dart';
+import 'package:flutter_try/chat_demo/chat_offline.dart';
 import 'package:flutter_try/color_demo.dart';
 import 'package:flutter_try/contract_demo.dart';
 import 'package:flutter_try/image_picker_demo.dart';
@@ -96,6 +98,8 @@ class RandomWordsState extends State<RandomWords> {
     'official demo to learn how to layout',
     'official demo to learn how to interact',
     'sample to anim list',
+    'sample to chat anim demo',
+    'sample to scale anim demo',
   ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
@@ -281,6 +285,10 @@ class RandomWordsState extends State<RandomWords> {
         return new ParentWidget();
       } else if (index == 27) {
         return new AnimatedListSample();
+      } else if (index == 28) {
+        return new FriendlychatApp();
+      } else if (index == 29) {
+        return new ScaleAnimationPage();
       } else {
         return new Scaffold(
           appBar: new AppBar(
