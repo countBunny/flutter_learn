@@ -23,14 +23,17 @@ class _WebSocketState extends State<WebSocketPage> {
     });
     while (null == _channel) {
       try {
+        final uri = Uri.base.resolve("ws://121.40.165.18:8800");
+        print('resolved uri is $uri port is ${uri.port}');
         _channel = new IOWebSocketChannel.connect(
-            'ws://echo.websocket.org'); //ws://echo.websocket.org
+            uri); //ws://echo.websocket.org
         _channel.stream.listen((data) {
           print('server reply:$data');
           setState(() {
             _words.add('server reply: $data');
           });
         });
+        throw new WebSocketChannelException("auto throw if can be caught");
       } on WebSocketChannelException catch (ex) {
         print("webSocketChannel bad $ex");
       }
@@ -111,6 +114,7 @@ class _WebSocketState extends State<WebSocketPage> {
     }
     _controller.clear();
     if (_channel != null && _channel.sink != null) {
+      print('send through socket');
       _channel.sink.add(text);
     }
     setState(() {
