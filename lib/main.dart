@@ -26,6 +26,7 @@ import 'package:flutter_try/sqflite_demo.dart';
 import 'package:flutter_try/text_demo.dart';
 import 'package:flutter_try/utils.dart';
 import 'package:flutter_try/video_player_demo.dart';
+import 'package:flutter_try/websocket/web_socket_demo.dart';
 import 'package:http/http.dart' as http;
 
 void main() => runApp(new MyApp());
@@ -68,39 +69,6 @@ class RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
 
   final _saved = new Set<WordPair>();
-
-  final _menus = <String>[
-    'sample view',
-    'sample to layout use EdgeInsets.only',
-    'sample to use animate',
-    'sample to use canvas',
-    'sample to custom view',
-    'sample to Navigator',
-    'sample to share handler obtain intent data!',
-    'sample to request http data',
-    'sample to visit asset resources',
-    'sample to supervisor lifecycle event',
-    'sample to layouts',
-    'layouts demo1 from stackOverflow',
-    'sample to gestureDetector',
-    'sample to use listView',
-    'sample to use Text in custom way',
-    'sample to table input',
-    'sample to use ImagePicker',
-    'sample to use VideoPlayer',
-    'sample to use sharedPreferences',
-    'sample to use sqflite',
-    'sample to color demo',
-    'sample to contacts demo',
-    'sample to card demo1',
-    'sample to card demo2',
-    'sample to chart demo with CustomPainter',
-    'official demo to learn how to layout',
-    'official demo to learn how to interact',
-    'sample to anim list',
-    'sample to chat anim demo',
-    'sample to scale anim demo',
-  ];
 
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
@@ -180,31 +148,101 @@ class RandomWordsState extends State<RandomWords> {
 
   void _pushSample() {
     Navigator.of(context).push(new MaterialPageRoute(builder: (context) {
-      var count = 0;
-      final tiles = _menus.map((menu) {
-        final index = count++;
-        return new ListTile(
-          title: new Text(
-            menu,
-            style: _biggerFont,
-          ),
-          onTap: () {
-            _sampleView(index);
-          },
-        );
-      });
-      final divided =
-          ListTile.divideTiles(context: context, tiles: tiles).toList();
-
-      return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Test Flutter for Android here!'),
-        ),
-        body: new ListView(
-          children: divided,
-        ),
-      );
+      return new DemoListPage();
     }));
+  }
+}
+
+class DemoListPage extends StatefulWidget {
+  final _menus = <Map<int, String>>[
+    {0: 'sample view'},
+    {1: 'sample to layout use EdgeInsets.only'},
+    {2: 'sample to use animate'},
+    {3: 'sample to use canvas'},
+    {4: 'sample to custom view'},
+    {5: 'sample to Navigator'},
+    {6: 'sample to share handler obtain intent data!'},
+    {7: 'sample to request http data'},
+    {8: 'sample to visit asset resources'},
+    {9: 'sample to supervisor lifecycle event'},
+    {10: 'sample to layouts'},
+    {11: 'layouts demo1 from stackOverflow'},
+    {12: 'sample to gestureDetector'},
+    {13: 'sample to use listView'},
+    {14: 'sample to use Text in custom way'},
+    {15: 'sample to table input'},
+    {16: 'sample to use ImagePicker'},
+    {17: 'sample to use VideoPlayer'},
+    {18: 'sample to use sharedPreferences'},
+    {19: 'sample to use sqflite'},
+    {20: 'sample to color demo'},
+    {21: 'sample to contacts demo'},
+    {22: 'sample to card demo1'},
+    {23: 'sample to card demo2'},
+    {24: 'sample to chart demo with CustomPainter'},
+    {25: 'official demo to learn how to layout'},
+    {26: 'official demo to learn how to interact'},
+    {27: 'sample to anim list'},
+    {28: 'sample to chat anim demo'},
+    {29: 'sample to scale anim demo'},
+    {30: 'sample to connect websocket'},
+  ];
+
+  DemoListPage({Key key}) : super(key: key);
+
+  @override
+  State<StatefulWidget> createState() => new _DemoListState();
+}
+
+class _DemoListState extends State<DemoListPage> {
+  static GlobalKey<ScaffoldState> _globelScaffoldState = new GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    final Decoration decoration = new BoxDecoration(
+      border: new Border(
+        bottom: Divider.createBorderSide(context),
+      ),
+    );
+    return new Scaffold(
+      key: _globelScaffoldState,
+      appBar: new AppBar(
+        title: new Text('Test Flutter for Android here!'),
+      ),
+      body: new ListView.builder(
+        itemBuilder: (context, index) {
+          return new DecoratedBox(
+            decoration: decoration,
+            position: DecorationPosition.foreground,
+            child: new Dismissible(
+                key: new Key(index.toString()),
+                onDismissed: (direction) {
+                  widget._menus.removeAt(index);
+                  _globelScaffoldState.currentState.showSnackBar(
+                      new SnackBar(content: new Text('$index been deleted')));
+                },
+                background: new Container(
+                  color: Colors.red[300],
+                  child: new Center(
+                    child: new Text(
+                      'you are removing this item!',
+                      style: new TextStyle(color: Colors.yellow[200]),
+                    ),
+                  ),
+                ),
+                child: new ListTile(
+                  title: new Text(
+                    widget._menus[index].entries.first.value,
+                  ),
+                  onTap: () {
+                    _sampleView(widget._menus[index].entries.first.key);
+                  },
+                )),
+          );
+        },
+        itemCount: widget._menus.length,
+      ),
+    );
   }
 
   void _sampleView(int index) {
@@ -274,7 +312,9 @@ class RandomWordsState extends State<RandomWords> {
       } else if (index == 21) {
         return new ContactsDemo();
       } else if (index == 22) {
-        return new CardDemo1(title: 'card demo1',);
+        return new CardDemo1(
+          title: 'card demo1',
+        );
       } else if (index == 23) {
         return new CardsDemo();
       } else if (index == 24) {
@@ -289,6 +329,8 @@ class RandomWordsState extends State<RandomWords> {
         return new FriendlychatApp();
       } else if (index == 29) {
         return new ScaleAnimationPage();
+      } else if (index == 30) {
+        return new WebSocketPage();
       } else {
         return new Scaffold(
           appBar: new AppBar(
@@ -302,17 +344,6 @@ class RandomWordsState extends State<RandomWords> {
     }));
   }
 
-  Widget customWidget() {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Custom Widget'),
-      ),
-      body: new Center(
-        child: new CustomButton('buttonCustomed'),
-      ),
-    );
-  }
-
   getCoodinateInRouteA() async {
 //    Map coordinates = await
     var object = await Navigator.of(context).pushNamed('/a');
@@ -323,6 +354,17 @@ class RandomWordsState extends State<RandomWords> {
 //    if (coordinates != null) {
 //      print('map is ${coordinates.toString()}');
 //    }
+  }
+
+  Widget customWidget() {
+    return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Custom Widget'),
+      ),
+      body: new Center(
+        child: new CustomButton('buttonCustomed'),
+      ),
+    );
   }
 }
 
